@@ -28,7 +28,7 @@ def trainer(data_path: str):
     help="Location where the processed NYC taxi trip data was saved"
 )
 def run_train(data_path: str):
-    rmse = training(data_path=data_path)
+    rmse = trainer(data_path=data_path)
 
     
 
