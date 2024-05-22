@@ -19,7 +19,9 @@ def trainer(data_path: str):
     y_pred = rf.predict(X_val)
 
     rmse = mean_squared_error(y_val, y_pred, squared=False)
-    return rmse
+    min_samples_split = rf.min_samples_split
+    return rmse, min_samples_split
+    
 
 @click.command()
 @click.option(
@@ -28,7 +30,7 @@ def trainer(data_path: str):
     help="Location where the processed NYC taxi trip data was saved"
 )
 def run_train(data_path: str):
-    rmse = trainer(data_path=data_path)
+    rmse, min_samples_split = trainer(data_path=data_path)
 
     
 
