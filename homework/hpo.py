@@ -29,7 +29,7 @@ def optimized_trainer(data_path: str, num_trials: int):
             y_pred = rf.predict(X_val)
             rmse = mean_squared_error(y_val, y_pred, squared=False)
             # logging params
-            mlflow.log_params(**params)
+            mlflow.log_params(params)
             # logging rmse
             mlflow.log_metric('rmse', rmse)
         return {'loss': rmse, 'status': STATUS_OK}
