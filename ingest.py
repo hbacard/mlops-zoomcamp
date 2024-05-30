@@ -14,7 +14,7 @@ if 'data_loader' not in globals():
 def ingest_files(**kwargs) -> pd.DataFrame:
     dfs: List[pd.DataFrame] = []
 
-    for year, months in [(2024, (3, 4))]:
+    for year, months in [(2023, (3, 4))]:
         for i in range(*months):
             response = requests.get(
                 base_url_yellow_taxi + f'_{year}-{i:02d}.parquet'
