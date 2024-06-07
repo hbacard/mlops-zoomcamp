@@ -12,29 +12,68 @@ blocks:
   language: python
   name: ingest
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
   type: data_loader
   upstream_blocks: []
   uuid: ingest
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   color: null
   configuration:
     file_source:
       path: homework_03/transformers/prepare.py
-  downstream_blocks: []
+  downstream_blocks:
+  - train
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
   name: prepare
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
   type: transformer
   upstream_blocks:
   - ingest
   uuid: prepare
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_path: homework_03/transformers/train.py
+    file_source:
+      path: homework_03/transformers/train.py
+  downstream_blocks:
+  - logging_model
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: train
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - prepare
+  uuid: train
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: homework_03/data_exporters/logging_model.py
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Logging model
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_exporter
+  upstream_blocks:
+  - train
+  uuid: logging_model
 cache_block_output_in_memory: false
 callbacks: []
 concurrency_config: {}
@@ -46,7 +85,7 @@ executor_config: {}
 executor_count: 1
 executor_type: null
 extensions: {}
-name: data_preparation
+name: yellow_taxi_pipeline
 notification_config: {}
 remote_variables_dir: null
 retry_config: {}
@@ -56,6 +95,7 @@ settings:
 spark_config: {}
 tags: []
 type: python
-uuid: data_preparation
+uuid: yellow_taxi_pipeline
+variables: {}
 variables_dir: /home/src/mage_data/homework_03
 widgets: []
