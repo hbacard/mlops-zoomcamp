@@ -1,5 +1,8 @@
 import argparse
-
+import os
+import boto3
+import pickle
+import pandas as pd
 # Create the parser
 parser = argparse.ArgumentParser(description='Process year and month.')
 
@@ -14,9 +17,11 @@ args = parser.parse_args()
 year = args.year
 month = args.month
 
-import pickle
-import pandas as pd
-
+# getting env variables
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_DEFAULT_REGION = os.environ.get("AWS_DEFAULT_REGION")
 
 with open('model.bin', 'rb') as f_in:
     dv, model = pickle.load(f_in)
@@ -40,42 +45,44 @@ def read_data(filename, year=2023, month=3):
 
 df = read_data(f'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{year:04d}-{month:02d}.parquet', year=year, month=month)
 
-# %%
-df.head()
 
-# %%
 dicts = df[categorical].to_dict(orient='records')
 X_val = dv.transform(dicts)
 y_pred = model.predict(X_val)
 
-
-# %%
 print(f"Standard deviation predicted duration: {y_pred.std()}")
 print(f"Mean predicted duration: {y_pred.mean()}")
 
 
-
-
-# %%
 df_result = pd.concat([df.ride_id, pd.DataFrame(y_pred, columns=["predictions"])], axis=1)
-df_result.head()
 
-# %%
-# output_file = f"output_file_{year:04d}-{month:02d}.parquet"
-# df_result.to_parquet(
-#     output_file,
-#     engine='pyarrow',
-#     compression=None,
-#     index=False
-# )
+output_file = f"output_file_{year:04d}-{month:02d}.parquet"
+df_result.to_parquet(
+    output_file,
+    engine='pyarrow',
+    compression=None,
+    index=False
+)
 
-# %%
-# ! du -h output_file.parquet
+s3 = boto3.client("s3",
+                aws_access_key_id=AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                region_name=AWS_DEFAULT_REGION)
 
-# %% [markdown]
-# ### Answer to Q2: 66M
+def upload_to_s3(output_file, bucket_name: str = BUCKET_NAME, folder: str = None):
+    file_name = output_file
+    file_path = os.path.join(".", file_name)
+    object_key = os.path.join(folder, file_name) if folder is not None else file_name
 
-# %% [markdown]
-# 
+    try:
+        # Upload the file
+        response = s3.upload_file(file_path, bucket_name, object_key)
+        print(f"{output_file} uploaded successfully.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+  
+upload_to_s3(output_file=output_file, folder="parquets")
+ 
 
 
