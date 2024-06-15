@@ -9,13 +9,16 @@ parser = argparse.ArgumentParser(description='Process year and month.')
 # Add the parameters
 parser.add_argument('--year', type=int, required=True, help='The year to process')
 parser.add_argument('--month', type=int, required=True, help='The month to process')
-
+parser.add_argument('--aws', type=str, required=False, help="Upload to an AWS S3 bucket", default='no')
 # Parse the arguments
 args = parser.parse_args()
 
 # Access the parameters
 year = args.year
 month = args.month
+aws_usage = args.aws
+aws_decision = True if aws_usage.lower().strip() in ['y', 'yes', 'true'] else False
+
 
 # getting env variables
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
@@ -81,8 +84,9 @@ def upload_to_s3(output_file, bucket_name: str = BUCKET_NAME, folder: str = None
     except Exception as e:
         print("An error occurred:", e)
 
-  
-upload_to_s3(output_file=output_file, folder="parquets")
+if aws_decision:
+    upload_to_s3(output_file=output_file, folder="parquets")
+
  
 
 

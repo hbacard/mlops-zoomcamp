@@ -1,7 +1,0 @@
-services:
-  taxi-duration:
-    env_file:
-      - .env
-    build:
-      context: .
-      dockerfile: taxi-duration.dockerfile

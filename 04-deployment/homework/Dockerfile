@@ -12,4 +12,4 @@ COPY scoring.py .
 
 
 # Specify the command to run the script with parameters
-CMD ["python", "scoring.py", "--year=2023", "--month=5"]
+CMD ["python", "scoring.py", "--year=2023", "--month=5", "--aws=no"]
