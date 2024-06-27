@@ -165,3 +165,4 @@ artifacts
 04-deployment/homework/*.parquet
 04-deployment/homework/*.parquet
 04-deployment/homework/webserver/
+.*-env
